@@ -1,6 +1,6 @@
-# smart_ro
+# Smart RO 
 
-**smart_ro** is an Arduino Nano-based reverse osmosis monitoring project for tracking drinking water flow, TDS, temperature, filter life, and Pure RO vs. remineralized water usage.
+This project is an Arduino Nano-based reverse osmosis monitoring project for tracking drinking water flow, TDS, temperature, filter life, and Pure RO vs. remineralized water usage.
 
 The project is designed for under-sink RO systems where water can be routed between plain RO water and remineralized water. It uses a small OLED dashboard, a real-time clock, EEPROM-backed usage storage, and sensor-driven diagnostics to give a practical view of system health and filter replacement timelines.
 
