@@ -32,25 +32,96 @@ The project is designed for under-sink RO systems where water can be routed betw
 
 ## Hardware
 
-Core components:
+This build is based on an **iSpring RCC7AK** reverse osmosis system with a manual Pure RO / remineralized water routing path added after the standard post-filter stage.
 
-* Arduino Nano R3 / ATmega328P
-* MH-01-G1-4 3-in-1 Flow + TDS + Temperature sensor
-* 0.96" I2C OLED display, SSD1306, 128x64
-* DS3231 RTC module
-* External analog TDS driver board
-* 10k potentiometer for manual valve-position sensing
-* 3 momentary push buttons
-* 10k resistor for temperature sensing, if required by the sensor wiring
-* USB power supply
-* RO tubing and fittings appropriate for the installation
+### Core RO System
 
-Optional future hardware:
+* **iSpring RCC7AK**
 
-* Motorized 3-way valve
-* Valve position feedback
-* External 12V actuator power supply
-* Motor driver / H-bridge / relay module, depending on valve type
+  * Base reverse osmosis system.
+  * Includes the alkaline remineralization stage used for the remineralized water path.
+
+### Electronics
+
+* **Arduino Nano / ATmega328P**
+
+  * Main controller for sensor reading, display updates, filter-life calculations, mode detection, and button navigation.
+  * Powered via USB.
+
+* **0.96" I2C OLED Display / SSD1306 / 128x64**
+
+  * Main telemetry dashboard.
+  * Displays flow, TDS, temperature, filter health, mode, diagnostics, and settings.
+
+* **DS3231 RTC Module**
+
+  * Real-time clock used for date-aware tracking.
+  * Supports the 7-day rolling usage average and filter replacement estimates.
+  * Shares the I2C bus with the OLED display.
+
+* **3x Tactile Push Buttons**
+
+  * Used for screen navigation, settings, calibration, and filter resets.
+  * Wired to Arduino pins `D4`, `D5`, and `D6`.
+  * Uses the Nano's internal pull-up resistors, so each button connects its input pin to `GND` when pressed.
+
+### Sensors
+
+* **MH-01-G1-4 3-in-1 Flow / TDS / Temperature Sensor**
+
+  * Integrated inline sensor installed in the 1/4" RO tubing.
+  * Provides:
+
+    * Hall-effect turbine flow sensing
+    * TDS electrode pair
+    * Water temperature sensing
+  * Flow signal connects to Arduino pin `D2 / INT0`.
+
+* **Analog TDS Driver Board**
+
+  * Conditions the raw TDS electrode pair from the MH-01 sensor into an Arduino-readable analog voltage.
+  * The MH-01 TDS electrode wires connect to the driver board input.
+  * The driver board analog output connects to Arduino pin `A1`.
+  * Do not connect the raw TDS electrode pair directly to the Arduino.
+
+* **10k Linear Potentiometer**
+
+  * Mechanically linked to the handle of the manual 3-way valve.
+  * Allows the Arduino to detect whether the system is routing:
+
+    * Pure RO water
+    * Remineralized water
+  * Potentiometer wiper connects to Arduino pin `A0`.
+
+* **10kΩ Resistor**
+
+  * Used as a pull-up resistor for the temperature sensing voltage divider, if the MH-01 temperature output is confirmed to be a raw thermistor signal.
+  * Works with the temperature signal on Arduino pin `A2`.
+
+### Plumbing
+
+* **1/4" L-Port 3-Way Ball Valve**
+
+  * Manual routing valve installed after Stage 5.
+  * Sends water down one of two paths:
+
+    * **Path A:** through the Stage 6 alkaline filter for remineralized water
+    * **Path B:** through a bypass line for Pure RO water
+
+* **2x 1/4" One-Way Check Valves**
+
+  * Installed near the end of both Path A and Path B before the paths merge.
+  * Prevents backfeeding between the remineralized and Pure RO paths.
+  * Helps avoid dead-leg mixing so the Pure RO path stays isolated from remineralized water.
+
+* **1/4" T-Junction Union**
+
+  * Final merge point where Path A and Path B combine into one outlet line.
+  * The merged line feeds the countertop sink faucet.
+
+* **Extra 1/4" RO Tubing**
+
+  * Used for the bypass path, sensor placement, valve routing, and final faucet connection.
 
 ---
 
